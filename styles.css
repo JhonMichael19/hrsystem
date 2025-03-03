@@ -1,0 +1,233 @@
+ /* General Styles */
+ body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    height: 100%;
+    background-color: aliceblue;
+  }
+
+  h2, h1 {
+    margin: 0;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  a {
+    text-decoration: none;
+    color: #333;
+  }
+
+  button {    
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    background: none;
+    font-size: 25px;
+  }
+
+  button:focus {
+    outline: none;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px;
+    height: 100%;
+    background-color: white;
+    color: black;
+    transform: translateX(-100%); /* Hide initially */
+    transition: transform 0.3s ease-in-out;
+    padding-top: 20px;
+    z-index: 1000; /* Ensure it sits on top */
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 10px;
+  }
+
+  .sidebar .logo {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .sidebar .logo img {
+    width: 100px;
+  }
+
+  .sidebar .logo  {
+    text-align: center;
+    color: gray;
+  }
+
+  .logo {
+    border-bottom: solid gray 1px;
+  }
+
+  .sidebar.active {
+    transform: translateX(0); /* Slide in */
+  }
+
+  .sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .sidebar-header h2 {
+    color: #ecf0f1;
+  }
+
+  .sidebar-nav li {
+    padding: 15px;
+  }
+
+  .sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    color: black;
+    padding: 10px 20px;
+  }
+
+  .sidebar-nav li a:hover {
+    background-color: #34495e;
+    color: white;
+    border-radius: 10px;
+  }
+
+  /* Sidebar Icons */
+  .sidebar-nav li a i {
+    margin-right: 10px; /* Space between icon and text */
+  }
+
+  /* Main Content Area */
+  .main-content {
+    padding: 20px;
+    background-color: #ecf0f1;
+    min-height: 100vh; /* Ensure content fills the screen */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+  }
+
+  .header {
+    background-color: white;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    top: 0;
+    position: sticky;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .header h1 {
+    margin-top: 5px;
+  }
+
+  .content {
+    padding: 20px;
+    background-color: #ecf0f1;
+  }
+
+  /* Overlay Effect for Entire Dashboard Except Sidebar */
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.3); /* Darkened background for the whole dashboard except sidebar */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999; /* Layer the overlay above content but below the sidebar */
+  }
+
+   /* Mobile Responsive Styles */
+   @media (max-width: 768px) {
+    /* Adjust the layout when the sidebar is hidden on mobile */
+    .sidebar {
+      width: 250px;
+    }
+
+    .main-content {
+      margin-left: 0; /* Remove the left margin for the sidebar when it's hidden */
+      padding: 10px;
+    }
+
+    .header {
+      display: flex;
+      padding: 10px;
+      box-shadow: none;
+    }
+
+    .header h1 {
+        font-size: 30px;
+    }
+    
+
+    .sidebar-toggle {
+      display: block; /* Ensure the toggle button is visible */
+      font-size: 30px;
+      background-color: transparent;
+      color: black;
+    }
+
+    /* When sidebar is active, adjust overlay and content */
+    .overlay {
+      display: block;
+      background-color: rgba(0, 0, 0, 0.3);
+      z-index: 999; /* Make sure overlay is above other content */
+    }
+  }
+
+  @media (max-width: 480px) {
+    /* For smaller mobile devices, further adjust styles */
+
+    .sidebar-nav li a {
+      font-size: 14px; /* Smaller font size on smaller screens */
+    }
+
+    .sidebar-nav li a i {
+      font-size: 18px; /* Smaller icon size */
+      margin-right: 10px; /* Adjust icon margin */
+    }
+
+    .header h1 {
+      font-size: 30px; /* Smaller header size for small screens */
+      margin-top: 5px;
+    }
+
+    .logo img {
+      width: 80px; /* Adjust logo size on smaller screens */
+    }
+  }
+
+  /* Basic loading screen styles */
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loader {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2.5s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
