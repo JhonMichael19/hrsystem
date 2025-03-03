@@ -151,3 +151,30 @@ input[type="submit"]:hover {
     background: #1e3b8b;
     color: #fff;
 }
+
+.file-list { 
+    margin-top: 10px; 
+    list-style: none; 
+    padding: 0; 
+}
+.file-item { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 8px; 
+    border: 1px solid #ccc; 
+    margin-bottom: 5px; 
+    border-radius: 5px; 
+    background: #f9f9f9;
+}
+.remove-btn { 
+    background: red; 
+    color: white; 
+    border: none; 
+    padding: 5px 10px; 
+    cursor: pointer; 
+    border-radius: 3px;
+}
+.remove-btn:hover { 
+    background: darkred; 
+}

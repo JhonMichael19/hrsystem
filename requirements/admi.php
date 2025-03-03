@@ -9,8 +9,8 @@ $password = "";    // Your database password
 $dbname = "admissiondb";           // The database name you created
 
 // Initialize variables and error messages
-$lastname = $firstname = $middlename = $gender = $civilStatus = $religion = $birthday = $email = $contact = $address = $barangay = $city = "";
-$lastnameErr = $firstnameErr = $middlenameErr = $genderErr = $civilStatusErr = $religionErr = $birthdayErr = $emailErr = $contactErr = $addressErr = $barangayErr = $cityErr = "";
+$lastname = $firstname = $middlename = $gender = $civilStatus = $religion = $birthday = $email = $contact = $address = $barangay = $city = $camploc = $admitype = $files = "";
+$lastnameErr = $firstnameErr = $middlenameErr = $genderErr = $civilStatusErr = $religionErr = $birthdayErr = $emailErr = $contactErr = $addressErr = $barangayErr = $cityErr = $camplocErr = $admitypeErr = $filesErr =  "";
 $successMsg = "";
 $submissionErr = "";
 
@@ -138,12 +138,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $city = test_input($_POST["city"]);
     }
 
+    //Validate Campus Location
+    if (empty($_POST["camploc"])) {
+        $camplocErr = "Pref Camp is required";
+    } else {
+        $camploc = test_input($_POST["camploc"]);
+        if (!in_array($camploc, ['Main', 'Bulacan'])) {
+            $camplocErr = "Invalid preferred campus selected";
+        }
+    }
+
+    //Validate Admission Type
+    if (empty($_POST["admitype"])) {
+        $admitypeErr = "Admission Type is required";
+    } else {
+        $admitype = test_input($_POST["admitype"]);
+        if (!in_array($admitype, ['Prof', 'OS', 'OF', 'Guard', 'Cashier'])) {
+            $admitypeErr = "Invalid Admi Type selected";
+        }
+    }
+
+    //Validate files
+    if (empty($_FILES["file_names"]["name"])) {
+        $filesErr = "Files are required";
+    } else {
+        $allowedFiles = ['PD', 'PSA', 'BC', 'NBI', 'PC'];
+        $files = $_FILES["file_names"]["name"];
+    
+        if (!in_array($files, $allowedFiles)) {
+            $filesErr = "Invalid file type selected";
+        }
+    }
+    
+    
+
     // If no errors, proceed to insert data into the database
     if (
         empty($lastnameErr) && empty($firstnameErr) && empty($middlenameErr) &&
         empty($genderErr) && empty($civilStatusErr) && empty($religionErr) &&
         empty($birthdayErr) && empty($emailErr) && empty($contactErr) &&
-        empty($addressErr) && empty($barangayErr) && empty($cityErr)
+        empty($addressErr) && empty($barangayErr) && empty($cityErr) &&
+        empty($camplocErr) && empty($admitypeErr) && empty($filesErr) 
     ) {
         // Create connection
         $conn = new mysqli($servername, $username, $password, $dbname);
@@ -153,12 +188,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $submissionErr = "Connection failed: " . $conn->connect_error;
         } else {
             // Prepare and bind
-            $stmt = $conn->prepare("INSERT INTO usersinfo (lastname, firstname, middlename, gender, civilStatus, religion, birthday, email, contact, address, barangay, city) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $conn->prepare("INSERT INTO usersinfo (lastname, firstname, middlename, gender, civilStatus, religion, birthday, email, contact, address, barangay, city, camploc, admitype, files) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             if ($stmt === false) {
                 $submissionErr = "Prepare failed: (" . $conn->errno . ") " . $conn->error;
             } else {
                 $stmt->bind_param(
-                    "ssssssssssss",
+                    "sssssssssssssss",
                     $lastname,
                     $firstname,
                     $middlename,
@@ -170,7 +205,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $contact,
                     $address,
                     $barangay,
-                    $city
+                    $city,
+                    $camploc,
+                    $admitype,
+                    $files
                 );
 
                 // Execute the statement
@@ -181,7 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // exit();
 
                     // Reset form values
-                    $lastname = $firstname = $middlename = $gender = $civilStatus = $religion = $birthday = $email = $contact = $address = $barangay = $city = "";
+                    $lastname = $firstname = $middlename = $gender = $civilStatus = $religion = $birthday = $email = $contact = $address = $barangay = $city = $camploc = $admitype = $files = "";
                 } else {
                     // Handle duplicate email error
                     if ($conn->errno == 1062) { // Duplicate entry
@@ -213,7 +251,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="bcp">
         <div class="logo">
-            <a href="http://localhost/hrsystem/frontpage/fp.php"><img src="logo.png.png" alt="Logo" width="80" height="95"></a>
+            <a href="http://localhost/newhrsystem/frontpage/fp.php"><img src="logo.png.png" alt="Logo" width="80" height="95"></a>
         </div>
         <h3>Bestlink College Of the Philippines Human Resources Management System</h3>
         <h1>HR Admission</h1>
@@ -302,6 +340,73 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <label for="city">Municipality/City <span class="error">* <?php echo $cityErr; ?></span></label><br>
                     <input type="text" name="city" value="<?php echo htmlspecialchars($city); ?>"><br>
                 </div>
+
+                <div class="cmploc">
+                    <label for="camploc">Preferred Campus: <span class="error">* <?php echo $camplocErr; ?></span></label><br>
+                    <select name="camploc">
+                        <option value="">--Select--</option>
+                        <option value="Main" <?php if ($camploc == "Main") echo "selected"; ?>>Main Campus</option>
+                        <option value="Bulacan" <?php if ($camploc == "Bulacan") echo "selected"; ?>>Bulacan Campus</option>
+                    </select><br>
+                </div>
+
+                <div class="admi">
+                    <label for="admitype">Admission Type: <span class="error">* <?php echo $admitypeErr; ?></span></label><br>
+                    <select name="admitype">
+                        <option value="">--Select--</option>
+                        <option value="Prof" <?php if ($admitype == "Prof") echo "selected"; ?>>Professor Instructor</option>
+                        <option value="OS" <?php if ($admitype == "OS") echo "selected"; ?>>Office Staff</option>
+                        <option value="OF" <?php if ($admitype == "OF") echo "selected"; ?>>Office Clerk</option>
+                        <option value="Guard" <?php if ($admitype == "Guard") echo "selected"; ?>>Guard</option>
+                        <option value="Cashier" <?php if ($admitype == "Cashier") echo "selected"; ?>>Cashier</option>
+                    </select><br>
+                </div>
+
+                <div class="filess">
+                <label for="files">Upload files: <span class="error">* <?php echo $filesErr; ?></span></label><br>
+                <input type="file" name ="files"  id="fileInput" multiple value="<?php echo htmlspecialchars($address); ?>"> <br>
+                <ul class="file-list" id="fileList"></ul>
+
+                </div>
+
+                <script>
+        let filesArray = [];
+
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const selectedFiles = Array.from(event.target.files);
+            
+            // Append new files to the existing list, avoiding duplicates
+            selectedFiles.forEach(file => {
+                if (!filesArray.some(f => f.name === file.name)) {
+                    filesArray.push(file);
+                }
+            });
+
+            updateFileList();
+        });
+
+        function updateFileList() {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = ""; // Clear previous list
+
+            filesArray.forEach((file, index) => {
+                const fileItem = document.createElement("li");
+                fileItem.classList.add("file-item");
+                fileItem.innerHTML = `
+                    <span>${file.name}</span>
+                    <button class="remove-btn" onclick="removeFile(${index})">Remove</button>
+                `;
+                fileList.appendChild(fileItem);
+            });
+        }
+
+        function removeFile(index) {
+            filesArray.splice(index, 1);
+            updateFileList();
+        }
+    </script>
+
+    
 
                 <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="submit" value="Submit" class="btn">
             </form>
